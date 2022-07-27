@@ -1,0 +1,30 @@
+<html>
+<body>
+<p>Event received timestamp: <i id="timestamp"></i></p>
+<p>Data: <pre id="data"></pre></p>
+
+<script type="text/javascript">
+  (function () {
+    const es = new EventSource('/sse')
+    const pre = document.getElementById('data')
+    const timestamp = document.getElementById('timestamp')
+    let closed = false
+
+    es.onmessage = function(ev) {
+      if (closed) return
+      pre.innerText = ev.data
+      timestamp.innerText = new Date().toISOString()
+    }
+
+    es.addEventListener('end', function() {
+      es.close()
+      closed = true
+    }, true)
+
+    es.onerror = function(e) {
+      closed = true
+    }
+  })()
+</script>
+</body>
+</html>

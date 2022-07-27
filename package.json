@@ -1,0 +1,14 @@
+{
+  "name": "time-by-sse",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "fastify": "^4.3.0",
+    "fastify-sse": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
