@@ -1,29 +1,35 @@
 <html>
 <body>
-<p>Event received timestamp: <i id="timestamp"></i></p>
 <p>Data: <pre id="data"></pre></p>
 
 <script type="text/javascript">
-  (function () {
-    const es = new EventSource('/sse')
-    const pre = document.getElementById('data')
-    const timestamp = document.getElementById('timestamp')
-    let closed = false
+  (async () => {
+    const uri = 'http://worldtimeapi.org/api/timezone/Asia/Ho_Chi_Minh'
+    const dataContainer = document.getElementById('data')
 
-    es.onmessage = function(ev) {
-      if (closed) return
-      pre.innerText = ev.data
-      timestamp.innerText = new Date().toISOString()
+    const getData = async () => {
+      const response = await fetch(uri)
+
+      if (!response.ok) {
+        throw new Error(`Server returned error: ${response.status} ${response.statusText}`)
+      }
+
+      return response.text()
     }
 
-    es.addEventListener('end', function() {
-      es.close()
-      closed = true
-    }, true)
-
-    es.onerror = function(e) {
-      closed = true
+    const refreshData = async () => {
+      try {
+        dataContainer.innerText = await getData()
+        setTimeout(refreshData, 1000)
+      }
+      catch (e) {
+        console.error(`Can't fetch the data.`, e)
+        console.error(`Scheduled to retry 5 seconds past.`)
+        setTimeout(refreshData, 5000)
+      }
     }
+
+    await refreshData()
   })()
 </script>
 </body>
